@@ -15,25 +15,16 @@ public class AlumniRecords {
 	private String db_username;
 	private String db_password;
 	
-	protected String alumni_name;
-	protected String alumni_address;
-	protected String alumni_designation;
-	protected String alumni_contact;
-	protected String alumni_email;
-	protected String alumni_year;
+	protected static String alumni_name;
+	protected static String alumni_address;
+	protected static String alumni_designation;
+	protected static String alumni_contact;
+	protected static String alumni_email;
+	protected static Integer alumni_year;
 	AlumniRecords(){
-		this.db_url = null;
-		this.db_username = null;
-		this.db_password = null;
-	}
-	AlumniRecords(
-			String url,
-			String username,
-			String password
-			){
-		this.db_url = url;
-		this.db_username = username;
-		this.db_password = password;
+		this.db_url = "jdbc:postgresql://localhost/giantspacemonster";
+		this.db_username = "giantspacemonster";
+		this.db_password = "Pm148e6#";
 		try {
 			this.db_conn = DriverManager.getConnection(this.db_url, this.db_username, this.db_password);
 			this.db_statement = db_conn.createStatement();
@@ -43,48 +34,79 @@ public class AlumniRecords {
 			_logger.log(Level.SEVERE, e.getMessage(), e);
 		}
 	}
-	public static void main(String[] args) throws SQLException{
-		AlumniRecords db_serve = new AlumniRecords("jdbc:postgresql://localhost/giantspacemonster","giantspacemonster","Pm148e6#");
+	public static void ProcessQuery(AlumniRecords db_serve, int choice) throws SQLException {
+		switch(choice) {
+		case 1:
+			//db_serve.setName("Debasish Raut");
+			//db_serve.setAddress("792/4 K, Tenor Street");
+			//db_serve.setDesignation("Whats a Designation?");
+			//db_serve.setContact("7008846462");
+			//db_serve.setEmail("example@email.com");
+			//db_serve.setYear("1986");
+			System.out.println(db_serve.insertRow(db_serve));
+			break;
+			default:
+				System.out.println("Something went horribly wrong!");
+		}
+	}
+	public String insertRow(AlumniRecords db_serve) throws SQLException {
+			try {
+			db_serve.db_response = db_serve.db_statement.executeQuery("INSERT INTO alumni VALUES('"
+					+getName()+"','"
+					+getAddress()+"','"
+					+getDesignation()+"','"
+					+getContact()+"','"
+					+getEmail()+"',"
+					+getYear()+");");
+			db_serve.db_conn.commit();
+			}
+			catch(SQLException e) {
+				if(e.getSQLState() != "02000")
+				{
+					return (e.getMessage());
+				}
+			}
+			return "TRANSACTION COMMITTED SUCESSFULLY";
 	}
 	public String getName() {
-		return this.alumni_name;
+		return alumni_name;
 	}
-	public void setName(String name) {
-		this.alumni_name = name;
+	public static void setName(String name) {
+		alumni_name = name;
 	}
 	
 	public String getAddress() {
-		return this.alumni_address;
+		return alumni_address;
 	}
-	public void setAddress(String address) {
-		this.alumni_address = address;
+	public static void setAddress(String address) {
+		alumni_address = address;
 	}
 	
 	public String getDesignation() {
-		return this.alumni_designation;
+		return alumni_designation;
 	}
-	public void setDesignation(String designation) {
-		this.alumni_designation = designation;
+	public static void setDesignation(String designation) {
+		alumni_designation = designation;
 	}
 	
 	public String getContact() {
-		return this.alumni_contact;
+		return alumni_contact;
 	}
-	public void setContact(String contact) {
-		this.alumni_contact = contact;
+	public static void setContact(String contact) {
+		alumni_contact = contact;
 	}
 	
 	public String getEmail() {
-		return this.alumni_email;
+		return alumni_email;
 	}
-	public void setEmail(String email) {
-		this.alumni_email = email;
+	public static void setEmail(String email) {
+		alumni_email = email;
 	}
 	
-	public String getYEar() {
-		return this.alumni_year;
+	public int getYear() {
+		return alumni_year;
 	}
-	public void setYear(String year) {
-		this.alumni_year = year;
+	public static void setYear(int year) {
+		alumni_year = year;
 	}
 }

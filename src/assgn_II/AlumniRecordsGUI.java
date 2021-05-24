@@ -6,9 +6,11 @@ import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Insets;
-import java.awt.TextField;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 import java.text.NumberFormat;
 
 import javax.swing.BoxLayout;
@@ -19,11 +21,19 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.NumberFormatter;
 import javax.swing.SwingConstants;
 
+//import assgn_II.AlumniRecords.*;
+
 public class AlumniRecordsGUI extends JFrame {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private static JPanel contentPane;
 	
@@ -35,22 +45,24 @@ public class AlumniRecordsGUI extends JFrame {
 	
 	private static JPanel formsPane;
 	private static JLabel alumni_name;
-	private static TextField name;
+	private static JTextField name;
 	private static JLabel alumni_address;
-	private static TextField address;
+	private static JTextField address;
 	private static JLabel alumni_designation;
-	private static TextField designation;
+	private static JTextField designation;
 	private static JLabel alumni_contact;
 	private static JFormattedTextField contact;
 	private static JLabel alumni_email;
-	private static TextField email;
+	private static JTextField email;
 	private static JLabel alumni_year;
-	private static JComboBox<String> year;
+	private static JComboBox<Integer> year;
 	
 	private static JTextArea alumni_title;
 	
 	private static JPanel messagePane;
 	private static JTextArea message;
+	private static JTextField input_string;
+	private static JButton multi_purpose_button;
 	/**
 	 * Launch the application.
 	 */
@@ -58,8 +70,93 @@ public class AlumniRecordsGUI extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					AlumniRecords db_serve = new AlumniRecords();
 					AlumniRecordsGUI frame = new AlumniRecordsGUI();
 					frame.setVisible(true);
+					add_record.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							name.setEnabled(true);
+							name.setEditable(true);
+							name.addMouseListener(new MouseAdapter() {
+								  @Override
+								  public void mouseClicked(MouseEvent e) {
+								    name.setText("");
+								  }
+								});
+							
+							address.setEnabled(true);
+							address.setEditable(true);
+							address.addMouseListener(new MouseAdapter() {
+								  @Override
+								  public void mouseClicked(MouseEvent e) {
+								    address.setText("");
+								  }
+								});
+							
+							designation.setEnabled(true);
+							designation.setEditable(true);
+							designation.addMouseListener(new MouseAdapter() {
+								  @Override
+								  public void mouseClicked(MouseEvent e) {
+									  designation.setText("");
+								  }
+								});
+							
+							contact.setEnabled(true);
+							contact.setEditable(true);
+							contact.addMouseListener(new MouseAdapter() {
+								  @Override
+								  public void mouseClicked(MouseEvent e) {
+									  contact.setText("");
+								  }
+								});
+							
+							email.setEnabled(true);
+							email.setEditable(true);
+							email.addMouseListener(new MouseAdapter() {
+								  @Override
+								  public void mouseClicked(MouseEvent e) {
+									  email.setText("");
+								  }
+								});
+							
+							year.setEnabled(true);
+							year.setEditable(true);
+							multi_purpose_button.setVisible(true);
+							//input_string.setVisible(true);
+							
+							multi_purpose_button.addActionListener(new ActionListener() {
+								@Override
+								public void actionPerformed(ActionEvent arg0) {
+									String name_of_alumni = name.getText();
+									String address_of_alumni = address.getText();
+									String contact_of_alumni = contact.getText();
+									String designation_of_alumni = designation.getText();
+									String email_of_alumni = email.getText();
+									int year_of_alumni = (Integer)year.getSelectedItem();
+									AlumniRecords.setName(name_of_alumni);
+									AlumniRecords.setAddress(address_of_alumni);
+									AlumniRecords.setDesignation(designation_of_alumni);
+									AlumniRecords.setContact(contact_of_alumni);
+									AlumniRecords.setEmail(email_of_alumni);
+									AlumniRecords.setYear(year_of_alumni);
+									try {
+										message.setText(db_serve.insertRow(db_serve));
+									} catch (SQLException e) {
+										e.printStackTrace();
+									}
+								}
+								
+							});
+							message.setText("Add Records Mode:\nEnter the details in the form above and press submit when ready.\n");
+						}
+						
+					});
+					
+					
+					
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -109,7 +206,7 @@ public class AlumniRecordsGUI extends JFrame {
 		JPanel namePane =new JPanel();
 		namePane.setLayout(new FlowLayout(FlowLayout.LEFT));
 		alumni_name = new JLabel("Name" + String.format("%12s", " "));
-		name = new TextField("Enter Name");
+		name = new JTextField("Enter Name");
 		name.setEnabled(false);
 		name.setEditable(false);
 		name.setColumns(45);
@@ -119,7 +216,7 @@ public class AlumniRecordsGUI extends JFrame {
 		JPanel addressPane =new JPanel();
 		addressPane.setLayout(new FlowLayout(FlowLayout.LEADING));
 		alumni_address = new JLabel("Address" + String.format("%8s", " "));
-		address = new TextField("Enter Address");
+		address = new JTextField("Enter Address");
 		address.setColumns(45);
 		address.setEnabled(false);
 		address.setEditable(false);
@@ -129,7 +226,7 @@ public class AlumniRecordsGUI extends JFrame {
 		JPanel designationPane =new JPanel();
 		designationPane.setLayout(new FlowLayout(FlowLayout.LEFT));
 		alumni_designation = new JLabel("Designation" + String.format("%s"," "));
-		designation = new TextField("Enter Designation");
+		designation = new JTextField("Enter Designation");
 		designation.setColumns(45);
 		designation.setEnabled(false);
 		designation.setEditable(false);
@@ -159,7 +256,7 @@ public class AlumniRecordsGUI extends JFrame {
 		JPanel emailPane =new JPanel();
 		emailPane.setLayout(new FlowLayout(FlowLayout.LEFT));
 		alumni_email = new JLabel("email" + String.format("%12s"," "));
-		email = new TextField("Enter email");
+		email = new JTextField("Enter email");
 		email.setColumns(45);
 		email.setEnabled(false);
 		email.setEditable(false);
@@ -169,12 +266,12 @@ public class AlumniRecordsGUI extends JFrame {
 		JPanel yearPane =new JPanel();
 		yearPane.setLayout(new FlowLayout(FlowLayout.LEFT));
 		alumni_year = new JLabel("Year" + String.format("%13s"," "));
-		String[] year_list = new String[50];
+		Integer[] year_list = new Integer[50];
 		
 		for(int i = 1972, j= 0; i <= 2021; i++, j++) {
-			year_list[j] = String.valueOf(i);  
+			year_list[j] = i;  
 		}
-		year = new JComboBox<String>(year_list);
+		year = new JComboBox<Integer>(year_list);
 		year.setEnabled(false);
 		year.setEditable(false);
 		yearPane.add(alumni_year);
@@ -194,7 +291,7 @@ public class AlumniRecordsGUI extends JFrame {
 		formsPane.add(emailPane);
 		formsPane.add(yearPane);
 		
-		message = new JTextArea("Welcome to Alumni Module.\nSelect form the buttons below. "
+		message = new JTextArea("Welcome to Alumni Module.\nSelect form the buttons below.\n "
 				+ "Add Record enables the above form, on which you can insert a record into the database.\n"
 				+ "Delete Record by name deletes the record from the database.\n"
 				+ "Use search button to search a record by name, and then you may update the record as per your requirement.");
@@ -207,6 +304,13 @@ public class AlumniRecordsGUI extends JFrame {
 		message.setLineWrap(true);
 		message.setWrapStyleWord(true);
 		messagePane.add(message);
+		
+		input_string = new JTextField();
+		input_string.setColumns(45);
+		input_string.setVisible(false);
+		multi_purpose_button = new JButton("Submit");
+		multi_purpose_button.setVisible(false);
+		messagePane.add(input_string);
+		messagePane.add(multi_purpose_button);
 	}
-
 }
