@@ -27,26 +27,11 @@ public class AlumniRecords {
 		this.db_password = "Pm148e6#";
 		try {
 			this.db_conn = DriverManager.getConnection(this.db_url, this.db_username, this.db_password);
-			this.db_statement = db_conn.createStatement();
+			this.db_statement = db_conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 		}
 		catch (SQLException e) {
 			Logger _logger = Logger.getLogger(DatabaseDescriptor.class.getName());
 			_logger.log(Level.SEVERE, e.getMessage(), e);
-		}
-	}
-	public static void ProcessQuery(AlumniRecords db_serve, int choice) throws SQLException {
-		switch(choice) {
-		case 1:
-			//db_serve.setName("Debasish Raut");
-			//db_serve.setAddress("792/4 K, Tenor Street");
-			//db_serve.setDesignation("Whats a Designation?");
-			//db_serve.setContact("7008846462");
-			//db_serve.setEmail("example@email.com");
-			//db_serve.setYear("1986");
-			System.out.println(db_serve.insertRow(db_serve));
-			break;
-			default:
-				System.out.println("Something went horribly wrong!");
 		}
 	}
 	public String insertRow(AlumniRecords db_serve) throws SQLException {
@@ -67,6 +52,30 @@ public class AlumniRecords {
 				}
 			}
 			return "TRANSACTION COMMITTED SUCESSFULLY";
+	}
+	
+	public String deleteRow(AlumniRecords db_serve, String name) throws SQLException {
+		try {
+			db_serve.db_response = db_serve.db_statement.executeQuery("DELETE FROM alumni WHERE name='"+name+"';");
+		}
+		catch(SQLException e) {
+			System.out.println(e.getMessage());
+			if(e.getSQLState() != "02000") {
+				return e.getMessage();
+			}
+		}
+		return "Record Sucessfully Deleted!";
+	}
+	public ResultSet searchRecord(AlumniRecords db_serve, String name) throws SQLException{
+		//ResultSet res = db_serve.db_response;
+		try {
+			db_serve.db_response = db_serve.db_statement.executeQuery("SELECT * FROM alumni WHERE name LIKE '"+name+"%';");
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return db_serve.db_response;
+		
 	}
 	public String getName() {
 		return alumni_name;
