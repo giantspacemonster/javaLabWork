@@ -32,12 +32,8 @@ import javax.swing.SwingConstants;
 //import assgn_II.AlumniRecords.*;
 
 public class AlumniRecordsGUI extends JFrame {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-
+	static int uid;
 	private static JPanel contentPane;
 	
 	private static JPanel buttonsPane;
@@ -297,16 +293,16 @@ public class AlumniRecordsGUI extends JFrame {
 		};
 		AbstractAction search_record_button = new AbstractAction("Search Record") {
 
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String rec_search = input_string.getText();
 				try {
 					ResultSet res = db_serve.searchRecord(db_serve, rec_search);
-					//ResultSet rec_count = db_serve.db_statement.executeQuery("SELECT COUNT(*) FROM alumni WHERE name LIKE '"+rec_search+"%';");
-					//if((db_serve.db_statement.executeQuery("SELECT COUNT(*) FROM alumni WHERE name='"+rec_search+"';").equals("0"))) {
-						//message.setText("Search Unsuccessful!");
-					//}
-					//rec_count.next();
 					int rowCount =-1;
 					if(res.last()) {
 						rowCount = 	res.getRow();
@@ -318,12 +314,6 @@ public class AlumniRecordsGUI extends JFrame {
 					else {
 						message.setText("Search Successful!");
 					}
-					//if(res.getRow() > 0) {
-						//message.setText("Search Successful!");
-					//}
-					//else {
-						//message.setText("Search Unsuccessful!");
-					//}
 					while(res != null && res.next()) {
 						name.setText(res.getString(1));
 						address.setText(res.getString(2));
@@ -331,6 +321,7 @@ public class AlumniRecordsGUI extends JFrame {
 						contact.setText(res.getString(4));
 						email.setText(res.getString(5));
 						year.setSelectedItem(Integer.parseInt(res.getString(6)));
+						uid = res.getInt(7);
 					}
 				}
 				catch (SQLException e) {
@@ -445,8 +436,9 @@ public class AlumniRecordsGUI extends JFrame {
 				update_record.setEnabled(true);
 				input_string.setColumns(45);
 				message.setText("Search Records Mode:\n"
-						+ "Enter the Name of the person whose record you want to search and click on submit."
-						+ "A successful Search also enable user to Update the record. Change the text field and click Update"
+						+ "Enter the Name of the person whose record you want to search and click on submit.\n"
+						+ "A successful Search will also enable the user to Update the record.\n"
+						+ "Change the text field as desired and click Update"
 						+ "to update record in the database.");
 				name.setEnabled(true);
 				name.setEditable(true);
@@ -460,6 +452,26 @@ public class AlumniRecordsGUI extends JFrame {
 				email.setEditable(true);
 				year.setEnabled(true);
 				year.setEditable(true);
+			}
+			
+		});
+		update_record.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				String name_of_alumni = name.getText();
+				String address_of_alumni = address.getText();
+				String contact_of_alumni = contact.getText();
+				String designation_of_alumni = designation.getText();
+				String email_of_alumni = email.getText();
+				int year_of_alumni = (Integer)year.getSelectedItem();
+				AlumniRecords.setName(name_of_alumni);
+				AlumniRecords.setAddress(address_of_alumni);
+				AlumniRecords.setDesignation(designation_of_alumni);
+				AlumniRecords.setContact(contact_of_alumni);
+				AlumniRecords.setEmail(email_of_alumni);
+				AlumniRecords.setYear(year_of_alumni);
+				message.setText(db_serve.updateRecord(db_serve,uid));		
 			}
 			
 		});

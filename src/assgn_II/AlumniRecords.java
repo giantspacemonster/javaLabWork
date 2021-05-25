@@ -2,6 +2,7 @@ package assgn_II;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -75,6 +76,35 @@ public class AlumniRecords {
 			e.printStackTrace();
 		}
 		return db_serve.db_response;
+		
+	}
+	public String updateRecord(AlumniRecords db_serve, int uid) {
+		String statement_template = "UPDATE alumni "
+				+ "SET "
+				+ "name = ?,"
+				+ "address = ?,"
+				+ "designation = ?,"
+				+ "contact = ?,"
+				+ "email = ?,"
+				+ "year = ? "
+				+ "WHERE uid = ?";
+		try {
+			PreparedStatement prepared_statement = db_serve.db_conn.prepareStatement(statement_template);
+			prepared_statement.setString(1, getName());
+			prepared_statement.setString(2, getAddress());
+			prepared_statement.setString(3, getDesignation());
+			prepared_statement.setString(4, getContact());
+			prepared_statement.setString(5, getEmail());
+			prepared_statement.setInt(6, getYear());
+			prepared_statement.setInt(7, uid);
+			
+			prepared_statement.executeUpdate();
+			}
+		catch(SQLException e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return "Update Sucessful";
 		
 	}
 	public String getName() {
